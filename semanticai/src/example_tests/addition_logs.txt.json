@@ -1,7 +1,0 @@
-[
-    {
-        "test_summary": "The code is intended to test a function named 'add' which takes two arguments and returns their sum. The tests cover various scenarios including adding positive integers, negative integers, a mix of positive and negative integers, zero, and floats. There is also a test to ensure that the function raises a TypeError when non-numeric arguments are passed.",
-        "function_names": "add",
-        "code": "def add(a, b):\n    if not isinstance(a, (int, float)) or not isinstance(b, (int, float)):\n        raise TypeError('Both arguments must be int or float')\n    return a + b"
-    }
-]

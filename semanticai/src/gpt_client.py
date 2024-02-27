@@ -1,6 +1,7 @@
 import openai
 from src.env import get_openai_pat
 
+
 class GPT:
     def __init__(self, model, temperature=0):
         self.model = model

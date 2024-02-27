@@ -1,0 +1,15 @@
+[{
+    "prompt": "\n\n    You're a python software developer. You will write code to make the unit tests given in the triple backticks passed. Provide the code to make the tests pass.\n\n    Perform the following actions. The only output should be the JSON object specified in the last step:\n\n    1. Summarize what the code is intended to do given the tests.\n    2. List the names of the functions that this test is covering.\n    3. Provide the code to make this test pass.\n    4. Output the above steps in a JSON object in the following format: \n    {\n        \"test_summary\": \"1\", \n        \"function_names\": \"2\",\n        \"code\": \"3\"}\n\n    tests:\n    ```import unittest\nfrom src.example_tests.addition import add\n\nclass TestAddFunction(unittest.TestCase):\n    def test_add_positive_integers(self):\n        self.assertEqual(add(1, 2), 3)\n\n    def test_add_negative_integers(self):\n        self.assertEqual(add(-1, -2), -3)\n\n    def test_add_positive_and_negative_integer(self):\n        self.assertEqual(add(-1, 2), 1)\n\n    def test_add_zero(self):\n        self.assertEqual(add(0, 0), 0)\n\n    # If you want your function to handle floats as well\n    def test_add_floats(self):\n        self.assertAlmostEqual(add(1.1, 2.2), 3.3, places=2)\n\n    # If you want to ensure type checking (e.g., both arguments must be int or float)\n    def test_add_non_numbers(self):\n        with self.assertRaises(TypeError):\n            add('a', 'b')\n\nif __name__ == '__main__':\n    unittest.main()\n```\n\n    ",
+    "model_response": {
+        "test_summary": "The code is intended to test a function named 'add' that adds two numbers together. It tests adding positive integers, negative integers, a mix of positive and negative integers, zero, and floats. It also tests for type safety by checking that non-numeric inputs raise a TypeError.",
+        "function_names": "add",
+        "code": "def add(a, b):\n    if not isinstance(a, (int, float)) or not isinstance(b, (int, float)):\n        raise TypeError('Inputs must be int or float')\n    return a + b"
+    },
+    "tests_summary": {
+        "total_count": 6,
+        "failed_count": 0,
+        "failed_names": [],
+        "success_count": 6,
+        "test_response": "......\n----------------------------------------------------------------------\nRan 6 tests in 0.000s\n\nOK\n"
+    }
+}]

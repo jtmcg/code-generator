@@ -80,3 +80,36 @@ def construct_iterative_success_prompt(provided_code, unittest_code, test_feedba
     ```{test_feedback}```
 
     """
+
+def construct_regression_prompt(unittest_code, test_feedback, most_successful_code, new_failing_tests):
+    return f"""
+
+    The provided code has regressed! The tests that were previously passing and are now failing are {new_failing_tests}.
+
+    Iterate on the non-regressed code, using the test runner feedback, to maintain that {new_failing_tests} continue to pass while making the failing tests pass. 
+    
+    The non-regressed code is in the first set of triple backticks, the unittest code used to test the non-regressed code is in the second triple backticks, and the test runner feedback is in the third set of triple backticks.
+    
+    Make sure that any non-test errors are addressed first and remove any unused imports. 
+    
+    Perform the following actions. The only output should be the JSON object specified in the last step:
+
+    1. State what in the code made the new passing tests pass.
+    2. Summarize why each failing test failed.
+    3. Summarize the functionality required for the failing tests to pass. Be sure to check that all positional arguments are used in the code.
+    4. Provide the code that contains that functionality.
+    5. Output the above steps in a JSON object in the following format: 
+    {{
+    "passing_tests_summary": "1",
+    "failing_tests_summary": "2", 
+    "missing_functionality": "3",
+    "code": "4"}}
+
+    code:
+    ```{most_successful_code}```
+    tests:
+    ```{unittest_code}```
+    test runner feedback:
+    ```{test_feedback}```
+
+    """
