@@ -1,5 +1,5 @@
 import unittest
-from utils import strip_unittest_path
+from strip_path import strip_unittest_path
 
 class TestStripUnittestPath(unittest.TestCase):
     def test_unit_test_name(self):

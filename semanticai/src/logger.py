@@ -33,6 +33,7 @@ class LogEntry:
         self.code_string_input = ''
         self.model_response = ''
         self.test_results = ''
+        self.response_summary = {}
 
     def set_prompt(self, prompt):
         self.prompt = prompt
@@ -48,6 +49,9 @@ class LogEntry:
 
     def set_test_results(self, test_results):
         self.test_results = test_results
+
+    def set_response_summary(self, response_summary):
+        self.response_summary = response_summary
 
     def create_log_entry(self):
         return {

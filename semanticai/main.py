@@ -4,15 +4,20 @@ import sys
 from src.logger import Logger, LogEntry
 from src.spinner import Spinner
 from src.completion import GPT
-from src.prompts import construct_initial_prompt, construct_iteration_prompt
-from src.utils import strip_unittest_path
+from src.prompts import construct_initial_prompt, construct_iteration_prompt, construct_iterative_success_prompt
+from src.utils.strip_path import strip_unittest_path
+from src.utils.get_unittest_results import get_unittest_results
 
 def generate_code(unittest_path):
 
     model = "gpt-4-turbo-preview"
     gpt = GPT(model, temperature=0.5)
     logger = Logger("gpt_responses", "src/logs/logs.json")
-    best_response = ''
+    test_summary = {}
+    most_successful_run = {
+        "code": "",
+        "test_results": None,
+    }
 
     test_name, test_path = strip_unittest_path(unittest_path)
 
@@ -32,8 +37,19 @@ def generate_code(unittest_path):
         if iteration == 0:
             prompt = construct_initial_prompt("python", unittest_code)
             log_entry.set_prompt(prompt)
+        elif test_summary["success_count"] > most_successful_run["test_results"]["success_count"]:
+            prompt = construct_iterative_success_prompt(
+                json_response["code"], 
+                unittest_code, 
+                output.stderr, 
+                test_summary, 
+                test_summary["success_count"] - most_successful_run["test_results"]["success_count"], 
+                [failed_name for failed_name in most_successful_run["test_results"]["failed_names"] if failed_name not in test_summary["failed_names"]]
+            )
+            most_successful_run["code"] = json_response["code"]
+            most_successful_run["test_results"] = test_summary
         else:
-            prompt = construct_iteration_prompt(json_response["code"], unittest_code, output.stderr)
+            prompt = construct_iteration_prompt(json_response["code"], unittest_code, output.stderr, test_summary)
             log_entry.set_prompt(prompt)
             log_entry.set_code_string_input(json_response["code"])
             log_entry.set_test_results(output.stderr)
@@ -56,7 +72,13 @@ def generate_code(unittest_path):
         output = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         log_entry.set_test_results(output.stderr)
 
+        test_summary = get_unittest_results(output.stderr)
+        log_entry.set_response_summary(test_summary)
+
         logger.log(log_entry.create_log_entry())
+        if iteration == 0:
+            most_successful_run["test_results"] = test_summary
+            most_successful_run["code"] = json_response["code"]
 
         if get_success(output.stderr):
             break
